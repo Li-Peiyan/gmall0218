@@ -6,11 +6,15 @@ import com.atguigu.gmall0218.bean.SkuImage;
 import com.atguigu.gmall0218.bean.SkuInfo;
 import com.atguigu.gmall0218.bean.SkuSaleAttrValue;
 import com.atguigu.gmall0218.bean.SpuSaleAttr;
+import com.atguigu.gmall0218.config.LoginRequire;
+import com.atguigu.gmall0218.service.ListService;
 import com.atguigu.gmall0218.service.ManageService;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -21,15 +25,15 @@ public class ItemController {
     @Reference
     private ManageService manageService;
 
-    //测试：localhost:8084/38.html
+    @Reference
+    private ListService listService;
+
+    //测试：localhost:8084/33.html
     //控制器
     @RequestMapping("{skuId}.html")
+    //@LoginRequire
     public String item(@PathVariable String skuId, HttpServletRequest request){
-        /*
-//        //显示图片列表
-//        List<SkuImage> skuImageList = manageService.getSkuImageBySkuId(skuId);
-//        //将图片集合保存到作用域
-//        request.setAttribute("skuImageList", skuImageList);*/
+
         //根据skuId 获取数据 SkuInfo + SkuImage
         SkuInfo skuInfo = manageService.getSkuInfo(skuId);
 
@@ -65,7 +69,10 @@ public class ItemController {
         //保存到作用域
         request.setAttribute("skuInfo", skuInfo);
         request.setAttribute("spuSaleAttrList", spuSaleAttrList);
-        
+
+        //更新热度
+        listService.incrHotScore(skuId);
+
         return "item";
     }
 }

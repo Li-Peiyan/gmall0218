@@ -7,6 +7,7 @@ import com.atguigu.gmall0218.config.RedisUtil;
 import com.atguigu.gmall0218.manage.constant.ManageConst;
 import com.atguigu.gmall0218.manage.mapper.*;
 import com.atguigu.gmall0218.service.ManageService;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -302,7 +303,9 @@ public class ManageSeriviceImpl implements ManageService {
             if (jedis!=null){
                 jedis.close();
             }
-            lock.unlock();
+            if(lock != null) {
+                lock.unlock();
+            }
         }
         return getSkuInfoDB(skuId);
 
@@ -361,11 +364,13 @@ public class ManageSeriviceImpl implements ManageService {
         //直接将 skuImageList 放入 skuInfo 中
         SkuInfo skuInfo = skuInfoMapper.selectByPrimaryKey(skuId);
         skuInfo.setSkuImageList(getSkuImageBySkuId(skuId));
+        //放入平台属性值集合
+        SkuAttrValue skuAttrValue = new SkuAttrValue();
+        skuAttrValue.setSkuId(skuId);
+        skuInfo.setSkuAttrValueList( skuAttrValueMapper.select(skuAttrValue) );
+
         return skuInfo;
     }
-
-
-
 
     @Override
     public List<SkuImage> getSkuImageBySkuId(String skuId) {
@@ -385,6 +390,18 @@ public class ManageSeriviceImpl implements ManageService {
         //根据spuId去查询销售属性值集合
         List<SkuSaleAttrValue> skuSaleAttrValueList = skuSaleAttrValueMapper.selectSkuSaleAttrValueListBySpu(spuId);
         return skuSaleAttrValueList;
+    }
+
+    @Override
+    public List<BaseAttrInfo> getAttrList(List<String> attrValueIdList) {
+        //SELECT * FROM base_attr_info bai INNER JOIN base_attr_value bav ON bai.id=bav.attr_id WHERE bav.id IN (81,82,83)
+        // 81,82,83 可以看作一个字符串
+        // 将集合编成字符串
+        String valueIds = StringUtils.join(attrValueIdList.toArray(), ",");
+        System.out.println(valueIds);
+        List<BaseAttrInfo> baseAttrInfoList = baseAttrInfoMapper.selectAttrInfoListByIds(valueIds);
+        return baseAttrInfoList;
+
     }
 
 }

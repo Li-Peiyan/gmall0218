@@ -39,5 +39,21 @@
 
     </select>
 
+    <select id="selectAttrInfoListByIds" resultMap="baseAttrInfoMapper" >
+        SELECT 
+			bai.id,
+			bai.attr_name,
+			bai.catalog3_id, 
+			bav.id attr_value_id ,
+			bav.attr_id ,
+			bav.value_name
+        FROM 
+			base_attr_info bai 
+		INNER JOIN base_attr_value bav ON bai.id=bav.attr_id
+		WHERE 
+			bav.id IN (${valueIds})
+
+    </select>
+
 
 </mapper>

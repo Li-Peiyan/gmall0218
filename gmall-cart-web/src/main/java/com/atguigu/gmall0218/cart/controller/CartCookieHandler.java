@@ -111,6 +111,13 @@ public class CartCookieHandler {
         CookieUtil.deleteCookie(request,response,cookieCartName);
     }
 
+    /**
+     * 是否被勾选
+     * @param request
+     * @param response
+     * @param skuId
+     * @param isChecked
+     */
     public void checkCart(HttpServletRequest request, HttpServletResponse response, String skuId, String isChecked) {
         List<CartInfo> cartList = getCartList(request);
         if(cartList != null && cartList.size() > 0){

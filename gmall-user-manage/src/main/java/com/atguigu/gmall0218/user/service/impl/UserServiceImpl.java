@@ -5,7 +5,6 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall0218.bean.UserAddress;
 import com.atguigu.gmall0218.bean.UserInfo;
-import com.atguigu.gmall0218.config.JestUtil;
 import com.atguigu.gmall0218.config.RedisUtil;
 import com.atguigu.gmall0218.service.UserService;
 import com.atguigu.gmall0218.user.mapper.UserAddressMapper;

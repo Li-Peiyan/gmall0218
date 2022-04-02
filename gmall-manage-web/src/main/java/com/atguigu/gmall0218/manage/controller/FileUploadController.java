@@ -30,9 +30,11 @@ public class FileUploadController {
         String imgUrl = fileUrl;
         //当文件不为空的时候才能上传
         if(file != null){
+            // JAVA获取当前文件路径
             String configFile = this.getClass().getResource("/tracker.conf").getFile();
             ClientGlobal.init(configFile);
             TrackerClient trackerClient=new TrackerClient();
+
             //获取连接
             TrackerServer trackerServer=trackerClient.getTrackerServer();
             StorageClient storageClient=new StorageClient(trackerServer,null);

@@ -40,6 +40,7 @@ public class SkuManageController {
         manageService.saveSkuInfo(skuInfo);
     }
 
+    //http://manage.gmall.com/onSale?skuId=33 ( - 38 )
     @RequestMapping("onSale")
     public void onSale(String skuId) throws InvocationTargetException, IllegalAccessException {
         SkuLsInfo skuLsInfo = new SkuLsInfo();

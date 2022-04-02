@@ -3,6 +3,7 @@ package com.atguigu.gware.service.impl;
 
 import com.alibaba.fastjson.JSON;
 
+import com.atguigu.gware.config.ActiveMQConfig;
 import com.atguigu.gware.util.HttpclientUtil;
 import com.atguigu.gware.config.ActiveMQUtil;
 import com.atguigu.gware.bean.WareInfo;
@@ -44,10 +45,10 @@ public class GwareServiceImpl implements GwareService {
     @Autowired
     WareOrderTaskDetailMapper wareOrderTaskDetailMapper;
 
-    @Autowired
-    ActiveMQUtil activeMQUtil;
 
-    @Value("${order.split.url}")
+    ActiveMQConfig activeMQConfig = new ActiveMQConfig();
+
+    @Value("${order.split.url:novalue}")
     private String ORDER_URL;
 
      public Integer  getStockBySkuId(String skuid){
@@ -183,7 +184,8 @@ public class GwareServiceImpl implements GwareService {
 
 
     public void sendToOrder(WareOrderTask wareOrderTask) throws JMSException{
-            Connection conn = activeMQUtil.getConn();
+            ActiveMQUtil activeMQUtil = activeMQConfig.getActiveMQUtil();
+            Connection conn = activeMQUtil.getConnection();
 
             Session session = conn.createSession(true, Session.SESSION_TRANSACTED);
             Destination destination = session.createQueue("SKU_DELIVER_QUEUE");
@@ -217,6 +219,7 @@ public class GwareServiceImpl implements GwareService {
             Map<String, String> map = new HashMap<>();
             map.put("orderId", wareOrderTask.getOrderId());
             map.put("wareSkuMap", jsonString);
+            // http://order.gmall.com/orderSplit？
             String resultJson = HttpclientUtil.doPost(  ORDER_URL, map);
             List<WareOrderTask> wareOrderTaskList = JSON.parseArray(resultJson, WareOrderTask.class);
             if (wareOrderTaskList.size()>=2){
@@ -268,7 +271,8 @@ public class GwareServiceImpl implements GwareService {
 
 
     public void sendSkuDeductMQ(WareOrderTask wareOrderTask) throws JMSException{
-        Connection conn = activeMQUtil.getConn();
+        ActiveMQUtil activeMQUtil = activeMQConfig.getActiveMQUtil();
+        Connection conn = activeMQUtil.getConnection();
 
         Session session = conn.createSession(true, Session.SESSION_TRANSACTED);
         Destination destination = session.createQueue("SKU_DEDUCT_QUEUE");

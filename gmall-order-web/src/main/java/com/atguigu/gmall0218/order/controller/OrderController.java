@@ -1,7 +1,10 @@
 package com.atguigu.gmall0218.order.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall0218.bean.*;
+import com.atguigu.gmall0218.bean.enums.OrderStatus;
+import com.atguigu.gmall0218.bean.enums.PaymentWay;
 import com.atguigu.gmall0218.config.LoginRequire;
 import com.atguigu.gmall0218.service.CartService;
 import com.atguigu.gmall0218.service.ManageService;
@@ -11,12 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @CrossOrigin
@@ -134,4 +139,42 @@ public class OrderController {
         return "redirect://payment.gmall.com/index?orderId="+orderId;
     }
 
+
+    @RequestMapping("orderSplit")
+    @ResponseBody
+    public String orderSplit(HttpServletRequest request){
+        // 获得参数
+        String orderId = request.getParameter("orderId");
+        String wareSkuMap = request.getParameter("wareSkuMap");
+        // 返回子订单集合
+        List<OrderInfo> orderInfoList = orderService.orderSplit(orderId, wareSkuMap);
+
+        // 创建一个集合来存储 Map
+        ArrayList<Map> mapArrayList = new ArrayList<>();
+
+        // 循环遍历
+        for (OrderInfo orderInfo : orderInfoList) {
+            // orderInfo 转换成 map
+            Map map = orderService.initWareOrder(orderInfo);
+            mapArrayList.add(map);
+        }
+
+        return JSON.toJSONString(mapArrayList);
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

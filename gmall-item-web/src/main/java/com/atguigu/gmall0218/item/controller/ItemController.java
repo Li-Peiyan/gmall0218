@@ -48,11 +48,12 @@ public class ItemController {
         //遍历拼接字符串
         for (int i = 0; i < skuSaleAttrValueList.size(); i++) {
             SkuSaleAttrValue skuSaleAttrValue = skuSaleAttrValueList.get(i);
-            //当本次 skuId 与下次 skuId 不同时停止拼接
+            // key>0 时需要拼上 "|"
             if(key.length() > 0){
                 key += "|";
             }
             key += skuSaleAttrValue.getSaleAttrValueId();
+            //不存在销售属性值 或 当本次 skuId 与下次 skuId 不同时停止拼接
             if(i+1 == skuSaleAttrValueList.size() || !skuSaleAttrValue.getSkuId().equals(skuSaleAttrValueList.get(i + 1).getSkuId()) ){
                 //停止拼接放入 map 集合
                 map.put(key, skuSaleAttrValue.getSkuId());

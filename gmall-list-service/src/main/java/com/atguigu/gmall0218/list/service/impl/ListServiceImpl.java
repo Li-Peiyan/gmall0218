@@ -31,7 +31,7 @@ import java.util.Map;
 @Service
 public class ListServiceImpl implements ListService {
     //手动注入
-    private JestClient jestClient = JestUtil.getJestClinet();
+    private JestClient jestClient = JestUtil.getJestClient();
 
     public static final String ES_INDEX="gmall";
 
@@ -51,11 +51,12 @@ public class ListServiceImpl implements ListService {
         //按照一定的规则来更新 es
         if(count % 10 == 0){
             //每10次更新一次
-            // es 更新语句
+            // es 更新热度
             updateHotScore(skuId,  Math.round(count));
         }
 
     }
+    // 更新热度
     private void updateHotScore(String skuId, long hotScore) {
         String upd = "{\n" +
                 "   \"doc\":{\n" +
@@ -99,7 +100,7 @@ public class ListServiceImpl implements ListService {
      */
     @Override
     public SkuLsResult search(SkuLsParams skuLsParams) {
-        //1. dsl 语句
+        //1. 动态 dsl 语句
         String query = makeQueryStringForSearch(skuLsParams);
         //2. 动作
         Search search = new Search.Builder(query).addIndex(ES_INDEX).addType(ES_TYPE).build();
@@ -184,7 +185,7 @@ public class ListServiceImpl implements ListService {
     }
 
     /**
-     * 返回值处理
+     * 返回值处理 成整理好的数据集
      * @param skuLsParams 用户输入
      * @param searchResult 通过 dsl 语句查询出来的结果
      * @return

@@ -13,34 +13,26 @@ import javax.jms.JMSException;
 public class ActiveMQUtil {
 
 
-    private PooledConnectionFactory poolFactory;
-
-    public    void init(String brokerUrl) {
-
-            ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(brokerUrl);
-
-              poolFactory = new PooledConnectionFactory(factory);
-            poolFactory.setMaxConnections(5);
-            //后台对象清理时，休眠时间超过了10000毫秒的对象为过期
-            poolFactory.setReconnectOnException(true);
-
-            poolFactory.setTimeBetweenExpirationCheckMillis(10000);
-
-
+    PooledConnectionFactory pooledConnectionFactory = null;
+    public  void init(String brokerUrl){
+        ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory(brokerUrl);
+        pooledConnectionFactory = new PooledConnectionFactory(activeMQConnectionFactory);
+        //设置超时时间
+        pooledConnectionFactory.setExpiryTimeout(2000);
+        // 设置出现异常的时候，继续重试连接
+        pooledConnectionFactory.setReconnectOnException(true);
+        // 设置最大连接数
+        pooledConnectionFactory.setMaxConnections(5);
     }
-
-
-
-
-    public Connection getConn() {
+    // 获取连接
+    public Connection getConnection(){
         Connection connection = null;
         try {
-            connection = poolFactory.createConnection();
-
+            connection = pooledConnectionFactory.createConnection();
         } catch (JMSException e) {
             e.printStackTrace();
         }
-        return connection;
+        return  connection;
     }
 
 

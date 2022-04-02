@@ -5,7 +5,7 @@ import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.config.HttpClientConfig;
 
 public class JestUtil {
-    public static JestClient getJestClinet(){
+    public static JestClient getJestClient(){
         JestClientFactory factory = new JestClientFactory();
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://81.69.33.96:9200")

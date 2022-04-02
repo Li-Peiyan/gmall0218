@@ -29,6 +29,7 @@ public class GwareController {
     @Autowired
     GwareService gwareService;
 
+    // http://www.gware.com/index
     @RequestMapping("index")
     public String index(){
         return "index";

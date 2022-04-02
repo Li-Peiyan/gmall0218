@@ -24,7 +24,7 @@ public class ListController {
     @RequestMapping("list.html")
     public String listData(SkuLsParams skuLsParams, HttpServletRequest request){
         //测试分页,设置分页大小
-        skuLsParams.setPageSize(1);
+        skuLsParams.setPageSize(2);
 
         SkuLsResult skuLsResult = listService.search(skuLsParams);
 
@@ -44,7 +44,7 @@ public class ListController {
         //制作一个面包屑
         ArrayList<BaseAttrValue> baseAttrValueList = new ArrayList<>();
 
-        //使用迭代器，将被选中的平台属性值移除
+        //使用迭代器，将被选中的平台属性移除
         for (Iterator<BaseAttrInfo> iterator = baseAttrInfoList.iterator(); iterator.hasNext(); ) {
             //平台属性
             BaseAttrInfo baseAttrInfo =  iterator.next();
@@ -53,12 +53,14 @@ public class ListController {
             //循环判断
             for (BaseAttrValue baseAttrValue : attrValueList) {
                 if(skuLsParams.getValueId() != null && skuLsParams.getValueId().length > 0){
+
                     for (String valueId : skuLsParams.getValueId()) {
                         if(valueId.equals(baseAttrValue.getId())){
                             //如果相同移除
                             iterator.remove();
 
                             //面包屑的组成 //baseAttrInfo.getAttrName()+":"+baseAttrValue.getValueName()
+                            // 把面包屑存在 BaseAttrValue 中
                             BaseAttrValue baseAttrValueed = new BaseAttrValue();
                             //将平台属性值的名称改成面包屑
                             baseAttrValueed.setValueName(baseAttrInfo.getAttrName()+":"+baseAttrValue.getValueName());
